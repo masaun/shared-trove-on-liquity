@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.6.11;
 
+import { IBorrowerOperations } from "./liquity/interfaces/IBorrowerOperations.sol";
 import { SharedTrove } from "./SharedTrove.sol";
 
 
@@ -9,13 +10,22 @@ import { SharedTrove } from "./SharedTrove.sol";
  */
 contract SharedTroveFactory {
 
-    constructor() public {}
+    event SharedTroveCreated(address shareTrove);
+
+    IBorrowerOperations public borrowerOperations;
+
+    constructor(IBorrowerOperations _borrowerOperations) public {
+        borrowerOperations = _borrowerOperations;        
+    }
 
     /**
      * @notice - Create a new shared-trove
      */
     function createSharedTrove() public returns (bool) {
-        /// [Todo]: Create a new shared-trove
+        SharedTrove sharedTrove = new SharedTrove(borrowerOperations);
+        address SHARE_TROVE = address(sharedTrove);
+
+        emit SharedTroveCreated(SHARE_TROVE);
     }
 
 }
