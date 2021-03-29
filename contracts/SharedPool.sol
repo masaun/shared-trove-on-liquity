@@ -26,7 +26,7 @@ contract SharedPool {
      */
     function depositToSharedPool() public payable returns (bool) {
         /// SharedMember transfer ETH into this pool contract
-        uint newSharedMemberId = getNextSharedMemberId();
+        //uint newSharedMemberId = getNextSharedMemberId();
         currentSharedMemberId++;
 
         SharedMember memory sharedMember = SharedMember({
@@ -36,10 +36,14 @@ contract SharedPool {
         sharedMembers.push(sharedMember);
     }
 
+    function getSharedMember(uint sharedMemberId) private returns (SharedMember memory _sharedMember) {
+        uint index = sharedMemberId.sub(1);
+        SharedMember memory sharedMember = sharedMembers[index];
+        return sharedMember;
+    }
 
     function getNextSharedMemberId() private returns (uint _nextSharedMemberId) {
         currentSharedMemberId.add(1);
     }
-    
 
 }
