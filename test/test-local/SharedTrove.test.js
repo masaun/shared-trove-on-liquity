@@ -95,16 +95,22 @@ contract("SharedTrove", function(accounts) {
             sharedTrove1 = await SharedTrove.at(SHARED_TROVE_1, { from: deployer })
         })
 
-        it("0.1 ETH should be deposited into the SharedTrove Pool1 from user1, 2, 3", async () => {
-            const _depositETHAmount = web3.utils.toWei('0.1', 'ether')
+        it("0.1 ETH should be deposited into the SharedTrove1 from user1, 2, 3", async () => {
+            const _depositETHAmount = web3.utils.toWei('0.1', 'ether')  /// 0.1 ETH
 
             let txReceipt1 = await sharedTrove1.depositToSharedPool({ from: user1, value: _depositETHAmount })
             let txReceipt2 = await sharedTrove1.depositToSharedPool({ from: user2, value: _depositETHAmount })
             let txReceipt3 = await sharedTrove1.depositToSharedPool({ from: user3, value: _depositETHAmount })
         })
 
+        it("ETH balance of the SharedTrove1 contract (pool) should be 0.3 ETH", async () => {
+            /// [Todo]:
+            // let ethBalance = await 
+            // assert.equal()
+        })
+
         it("Open a new trove with multiple users", async () => {
-            const _maxFee = web3.utils.toWei('10', 'ether') /// 10% 
+            const _maxFee = web3.utils.toWei('0.05', 'ether') /// 5% (This percentage should be more than 5e15) 
             const _LUSDAmount = web3.utils.toWei('10', 'ether')
             const _upperHint = user1
             const _lowerHint = user2
