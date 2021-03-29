@@ -110,8 +110,8 @@ contract("SharedTrove", function(accounts) {
         })
 
         it("Open a new trove with multiple users", async () => {
-            const _maxFee = web3.utils.toWei('0.05', 'ether') /// 5% (This percentage should be more than 5e15) 
-            const _LUSDAmount = web3.utils.toWei('10', 'ether')
+            const _maxFee = web3.utils.toWei('0.05', 'ether')     /// minimum 5% (This percentage should be more than 5e15) 
+            const _LUSDAmount = web3.utils.toWei('1950', 'ether') /// MIN_NET_DEBT = 1950e18 (Therefore, _LUSDAmount should be more than 1950 LUSD)
             const _upperHint = user1
             const _lowerHint = user2
 
