@@ -34,11 +34,19 @@ contract("SharedTrove", function(accounts) {
     let SHARED_TROVE_FACTORY
     let BORROWER_OPERATIONS = contractAddressList["Kovan"]["Liquity"]["borrowerOperations"]
 
+    /// Global variable for each shared-trove
+    let sharedTrove1
+    let sharedTrove2
+    let sharedTrove3
+    let SHARED_TROVE_1
+    let SHARED_TROVE_2
+    let SHARED_TROVE_3
+
     async function getEvents(contractInstance, eventName) {
         /// [Note]: Retrieve an event log of eventName (via web3.js v1.0.0)
         let events = await contractInstance.getPastEvents(eventName, {
             filter: {},
-            fromBlock: 24087387,  /// [Note]: Please specify the latest blockNumber of kovan testnet as "fromBlock". Otherwise, it takes long time to retrieve the result of events
+            fromBlock: 24087928,  /// [Note]: Please specify the latest blockNumber of kovan testnet as "fromBlock". Otherwise, it takes long time to retrieve the result of events
             //fromBlock: 0,
             toBlock: 'latest'
         })
@@ -69,10 +77,26 @@ contract("SharedTrove", function(accounts) {
         })          
 
         it("Retrieve event log of SharedTroveCreated in the SharedTroveFactory contract", async () => {
-            let SharedTroveCreated = await getEvents(sharedTroveFactory, "SharedTroveCreated")
+            SharedTroveCreated = await getEvents(sharedTroveFactory, "SharedTroveCreated")
+            SHARED_TROVE_1 = SharedTroveCreated.sharedTrove
             console.log("=== event log of SharedTroveCreated ===", SharedTroveCreated)            
+            console.log("=== SHARED_TROVE_1 ===", SHARED_TROVE_1)
         })
     })
 
+    describe("SharedTrove", () => {
+        it("A SharedTrove contract instance should be created", async () => {
+            sharedTrove1 = await SharedTrove.at(SHARED_TROVE_1, { from: deployer })
+        })
+
+        it("0.1 ETH should be deposited into the SharedTrove from user1, 2, 3", async () => {
+            const _maxFee = 0 
+            const _LUSDAmount = web3.utils.toWei('0.1', 'ether')
+            const _upperHint = user1
+            const _lowerHint = user2
+
+            let txReceipt1 = await sharedTrove1.openTroveWithMultipleUsers(_maxFee, _LUSDAmount, _upperHint, _lowerHint, { from: user1 })
+        })
+    })
 
 })
