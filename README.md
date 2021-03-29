@@ -54,9 +54,9 @@ $ ganache-cli -d --fork https://kovan.infura.io/v3/{YOUR INFURA KEY}@{BLOCK_NUMB
 <br>
 
 - 2: Execute test of the smart-contracts (on the local)
-  - Test for the Something contract
-    `$ npm run test:Something`
-    ($ truffle test ./test/test-local/Something.test.js)
+  - Test for the SharedTroveFactory contract
+    `$ npm run test:SharedTroveFactory`
+    ($ truffle test ./test/test-local/SharedTroveFactory.test.js)
 
 <br>
 
