@@ -90,12 +90,15 @@ contract("SharedTrove", function(accounts) {
         })
 
         it("0.1 ETH should be deposited into the SharedTrove from user1, 2, 3", async () => {
-            const _maxFee = 0 
-            const _LUSDAmount = web3.utils.toWei('0.1', 'ether')
+            const _maxFee = 10 /// 10% 
+            const _LUSDAmount = web3.utils.toWei('10', 'ether')
             const _upperHint = user1
             const _lowerHint = user2
 
-            let txReceipt1 = await sharedTrove1.openTroveWithMultipleUsers(_maxFee, _LUSDAmount, _upperHint, _lowerHint, { from: user1 })
+            /// [Todo]: Deposited-ETH amount should be calculated depends on LUSD amount by using Chainlink's Price Feed
+            const _depositETHAmount = web3.utils.toWei('0.1', 'ether')
+
+            let txReceipt1 = await sharedTrove1.openTroveWithMultipleUsers(_maxFee, _LUSDAmount, _upperHint, _lowerHint, { from: user1, value: _depositETHAmount })
         })
     })
 
