@@ -12,19 +12,21 @@ contract SharedTrove is SharedPool {
 
     IBorrowerOperations public borrowerOperations;
 
-    address BORROWER_OPERATIONS;
+    address payable BORROWER_OPERATIONS;
 
     constructor(IBorrowerOperations _borrowerOperations) public SharedPool() {
         borrowerOperations = _borrowerOperations;
-        BORROWER_OPERATIONS = address(_borrowerOperations);
+        BORROWER_OPERATIONS = address(uint160(address(_borrowerOperations)));  /// Payable
     }
 
     /**
      * @notice - This pool contract execute openTrove() 
      */
-    function openTroveWithMultipleUsers(uint _depositETHAmount, uint _maxFee, uint _LUSDAmount, address _upperHint, address _lowerHint) public returns (bool) {
-        /// [Note]: Pooled-ETH is deposited for opening a new trove.
+    function openTroveWithMultipleUsers(uint _depositETHAmount, uint _maxFee, uint _LUSDAmount, address _upperHint, address _lowerHint) public payable returns (bool) {
+        /// [Todo]: Transfer ETH from this pool to the BorrowerOperations contract
         BORROWER_OPERATIONS.transfer(_depositETHAmount);
+
+        /// [Note]: Pooled-ETH is deposited for opening a new trove.
         borrowerOperations.openTrove(_maxFee, _LUSDAmount, _upperHint, _lowerHint);
     }
 
@@ -32,7 +34,7 @@ contract SharedTrove is SharedPool {
     /**
      * @notice - Get ETH balance of this contract (Shared-Trove pool)
      */
-    function getETHBalance() public returns (uint _ethBalance) {
+    function getETHBalance() public view returns (uint _ethBalance) {
         return address(this).balance;
     }
     
