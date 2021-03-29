@@ -95,16 +95,22 @@ contract("SharedTrove", function(accounts) {
             sharedTrove1 = await SharedTrove.at(SHARED_TROVE_1, { from: deployer })
         })
 
-        it("0.1 ETH should be deposited into the SharedTrove from user1, 2, 3", async () => {
+        it("0.1 ETH should be deposited into the SharedTrove Pool1 from user1, 2, 3", async () => {
+            const _depositETHAmount = web3.utils.toWei('0.1', 'ether')
+
+            let txReceipt1 = await sharedTrove1.depositToSharedPool({ from: user1, value: _depositETHAmount })
+            let txReceipt2 = await sharedTrove1.depositToSharedPool({ from: user2, value: _depositETHAmount })
+            let txReceipt3 = await sharedTrove1.depositToSharedPool({ from: user3, value: _depositETHAmount })
+        })
+
+        it("Open a new trove with multiple users", async () => {
             const _maxFee = web3.utils.toWei('10', 'ether') /// 10% 
             const _LUSDAmount = web3.utils.toWei('10', 'ether')
             const _upperHint = user1
             const _lowerHint = user2
 
             /// [Todo]: Deposited-ETH amount should be calculated depends on LUSD amount by using Chainlink's Price Feed
-            const _depositETHAmount = web3.utils.toWei('0.1', 'ether')
-
-            let txReceipt1 = await sharedTrove1.openTroveWithMultipleUsers(_maxFee, _LUSDAmount, _upperHint, _lowerHint, { from: user1, value: _depositETHAmount })
+            let txReceipt1 = await sharedTrove1.openTroveWithMultipleUsers(_maxFee, _LUSDAmount, _upperHint, _lowerHint, { from: user1 })
         })
     })
 
