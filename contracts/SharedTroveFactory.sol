@@ -10,7 +10,7 @@ import { SharedTrove } from "./SharedTrove.sol";
  */
 contract SharedTroveFactory {
 
-    event SharedTroveCreated(address shareTrove);
+    event SharedTroveCreated(address sharedTrove);
 
     IBorrowerOperations public borrowerOperations;
 
@@ -23,9 +23,9 @@ contract SharedTroveFactory {
      */
     function createSharedTrove() public returns (bool) {
         SharedTrove sharedTrove = new SharedTrove(borrowerOperations);
-        address SHARE_TROVE = address(sharedTrove);
+        address SHARED_TROVE = address(sharedTrove);
 
-        emit SharedTroveCreated(SHARE_TROVE);
+        emit SharedTroveCreated(SHARED_TROVE);
     }
 
 }

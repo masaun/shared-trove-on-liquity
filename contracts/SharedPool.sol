@@ -10,36 +10,35 @@ import { SafeMath } from "@openzeppelin/contracts/math/SafeMath.sol";
 contract SharedPool {
     using SafeMath for uint;
 
-    uint currentUserId;
+    uint currentSharedMemberId;
 
-    /// [Note]: User is also "Shared-member" 
-    struct User {
+    struct SharedMember {
         address walletAddress;
         uint depositAmount;
     }
-    User[] users;
+    SharedMember[] sharedMembers;
 
     constructor() public {}
 
     /**
-     * @notice - Users deposit this shared-pool
+     * @notice - SharedMembers deposit this shared-pool
      * @notice - Deposited-amount of this pool is used for openTrove.
      */
     function depositToSharedPool() public payable returns (bool) {
-        /// User transfer ETH into this pool contract
-        uint newUserId = getNextUserId();
-        currentUserId++;
+        /// SharedMember transfer ETH into this pool contract
+        uint newSharedMemberId = getNextSharedMemberId();
+        currentSharedMemberId++;
 
-        User memory user = User({
+        SharedMember memory sharedMember = SharedMember({
             walletAddress: msg.sender,
             depositAmount: msg.value
         });
-        users.push(user);
+        sharedMembers.push(sharedMember);
     }
 
 
-    function getNextUserId() private returns (uint _nextUserId) {
-        currentUserId.add(1);
+    function getNextSharedMemberId() private returns (uint _nextSharedMemberId) {
+        currentSharedMemberId.add(1);
     }
     
 
