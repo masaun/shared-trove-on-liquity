@@ -58,6 +58,10 @@ $ ganache-cli -d --fork https://kovan.infura.io/v3/{YOUR INFURA KEY}@{BLOCK_NUMB
     `$ npm run test:SharedTroveFactory`
     ($ truffle test ./test/test-local/SharedTroveFactory.test.js)
 
+  - Test for the SharedTrove contract
+    `$ npm run test:SharedTrove`
+    ($ truffle test ./test/test-local/SharedTrove.test.js)
+
 <br>
 
 

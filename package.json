@@ -7,6 +7,7 @@
   },
   "scripts": {
     "test": "truffle test ./test/test-local/*",
+    "test:SharedTrove": "truffle test ./test/test-local/SharedTrove.test.js",
     "test:SharedTroveFactory": "truffle test ./test/test-local/SharedTroveFactory.test.js",
     "compile:local": "truffle compile --reset --network local",
     "migrate:local": "truffle migrate --reset --network local",

@@ -43,7 +43,7 @@ contract SharedPool {
     }
 
     function getNextSharedMemberId() private returns (uint _nextSharedMemberId) {
-        currentSharedMemberId.add(1);
+        return currentSharedMemberId.add(1);
     }
 
 }
