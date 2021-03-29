@@ -2,6 +2,9 @@
 const Web3 = require('web3');
 const web3 = new Web3(new Web3.providers.WebsocketProvider('ws://localhost:8545'))
 
+/// Openzeppelin test-helper
+const { time } = require('@openzeppelin/test-helpers');
+
 /// Import deployed-addresses
 const contractAddressList = require("../../migrations/addressesList/contractAddress/contractAddress.js")
 const tokenAddressList = require("../../migrations/addressesList/tokenAddress/tokenAddress.js")
@@ -32,10 +35,13 @@ contract("SharedTroveFactory", function(accounts) {
     let BORROWER_OPERATIONS = contractAddressList["Kovan"]["Liquity"]["borrowerOperations"]
 
     async function getEvents(contractInstance, eventName) {
+        const _latestBlock = await time.latestBlock()
+        const LATEST_BLOCK = Number(String(_latestBlock))
+
         /// [Note]: Retrieve an event log of eventName (via web3.js v1.0.0)
         let events = await contractInstance.getPastEvents(eventName, {
             filter: {},
-            fromBlock: 24087813,  /// [Note]: Please specify the latest blockNumber of kovan testnet as "fromBlock". Otherwise, it takes long time to retrieve the result of events
+            fromBlock: LATEST_BLOCK, /// [Note]: The latest block on Kovan testnet
             //fromBlock: 0,
             toBlock: 'latest'
         })
