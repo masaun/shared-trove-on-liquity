@@ -36,6 +36,10 @@ contract SharedPool {
         sharedMembers.push(sharedMember);
     }
 
+    function getAllSharedMembers() private returns (SharedMember[] memory _sharedMembers) {
+        return sharedMembers;
+    }
+
     function getSharedMember(uint sharedMemberId) private returns (SharedMember memory _sharedMember) {
         uint index = sharedMemberId.sub(1);
         SharedMember memory sharedMember = sharedMembers[index];
@@ -43,7 +47,7 @@ contract SharedPool {
     }
 
     function getNextSharedMemberId() private returns (uint _nextSharedMemberId) {
-        currentSharedMemberId.add(1);
+        return currentSharedMemberId.add(1);
     }
 
 }

@@ -2,7 +2,9 @@
 
 ***
 ## 【Introduction of the Shared-Trove on Liquity】
-- This is a smart contract that: 
+- This is a smart contract that is able to create a shared-trove: 
+  - multiple users per single Trove, with the aim of a reduced minimum net debt per user, 
+  - and `batched top-ups / withdrawals / adjustments` to save on gas costs
 
 &nbsp;
 
@@ -57,6 +59,10 @@ $ ganache-cli -d --fork https://kovan.infura.io/v3/{YOUR INFURA KEY}@{BLOCK_NUMB
   - Test for the SharedTroveFactory contract
     `$ npm run test:SharedTroveFactory`
     ($ truffle test ./test/test-local/SharedTroveFactory.test.js)
+
+  - Test for the SharedTrove contract
+    `$ npm run test:SharedTrove`
+    ($ truffle test ./test/test-local/SharedTrove.test.js)
 
 <br>
 
