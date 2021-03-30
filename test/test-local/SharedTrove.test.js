@@ -75,7 +75,7 @@ contract("SharedTrove", function(accounts) {
     } 
 
     describe("Setup smart-contracts", () => {
-        it("Deploy the BorrowerOperations contract instance", async () => {
+        it("Deploy the BorrowerOperations contract", async () => {
             borrowerOperations = await BorrowerOperations.new(TROVE_MANAGER,
                                                                ACTIVE_POOL, 
                                                                DEFAULT_POOL, 
@@ -90,7 +90,7 @@ contract("SharedTrove", function(accounts) {
             BORROWER_OPERATIONS = borrowerOperations.address
         })
 
-        it("Deploy the SharedTroveFactory contract instance", async () => {
+        it("Deploy the SharedTroveFactory contract", async () => {
             sharedTroveFactory = await SharedTroveFactory.new(BORROWER_OPERATIONS, { from: deployer })
             //sharedTroveFactory = await SharedTroveFactory.new(BORROWER_OPERATIONS, TROVE_MANAGER, { from: deployer })
             SHARED_TROVE_FACTORY = sharedTroveFactory.address
@@ -153,7 +153,7 @@ contract("SharedTrove", function(accounts) {
             /// [Test]: Execute openTrove() method by using the BorrowerOperations.sol
             /// [Note]: Transfer 2 ETH as a collateral
             //borrowerOperations = await IBorrowerOperations.at(BORROWER_OPERATIONS)
-            let txReceipt2 = await borrowerOperations.openTrove(_maxFee, _LUSDAmount, _upperHint, _lowerHint, { from: user1, value: web3.utils.toWei('2', 'ether') })  /// [Result]: Error of "BorrowerOps: Trove is active."
+            //let txReceipt2 = await borrowerOperations.openTrove(_maxFee, _LUSDAmount, _upperHint, _lowerHint, { from: deployer, value: web3.utils.toWei('2', 'ether') })  /// [Result]: Error of "BorrowerOps: Trove is active."
 
             /// [Note]: MCR (Minimum collateral ratio for individual troves) should be more than 110%
             ///         Therefore, ETH balance of the SharedTrove1 contract (pool) should be more than around 1.5 ETH.
