@@ -13,6 +13,7 @@ const tokenAddressList = require("../../migrations/addressesList/tokenAddress/to
 const SharedTrove = artifacts.require("SharedTrove")
 const SharedTroveFactory = artifacts.require("SharedTroveFactory")
 const IBorrowerOperations = artifacts.require("IBorrowerOperations")
+const ITroveManager = artifacts.require("ITroveManager")
 
 
 /**
@@ -31,11 +32,13 @@ contract("SharedTrove", function(accounts) {
     let sharedTrove
     let sharedTroveFactory
     let borrowerOperations
+    let troveManager
 
     /// Global variable for each contract addresses
     let SHARED_TROVE
     let SHARED_TROVE_FACTORY
     let BORROWER_OPERATIONS = contractAddressList["Kovan"]["Liquity"]["borrowerOperations"]
+    let TROVE_MANAGER = contractAddressList["Kovan"]["Liquity"]["troveManager"]
 
     /// Global variable for each shared-trove
     let sharedTrove1
@@ -62,7 +65,7 @@ contract("SharedTrove", function(accounts) {
 
     describe("Setup smart-contracts", () => {
         it("Deploy the SharedTroveFactory contract instance", async () => {
-            sharedTroveFactory = await SharedTroveFactory.new(BORROWER_OPERATIONS, { from: deployer })
+            sharedTroveFactory = await SharedTroveFactory.new(BORROWER_OPERATIONS, TROVE_MANAGER, { from: deployer })
             SHARED_TROVE_FACTORY = sharedTroveFactory.address
         })
 
@@ -74,6 +77,7 @@ contract("SharedTrove", function(accounts) {
         it("[Log]: Deployed-contracts addresses", async () => {
             console.log("=== SHARED_TROVE_FACTORY ===", SHARED_TROVE_FACTORY)
             console.log("=== BORROWER_OPERATIONS ===", BORROWER_OPERATIONS)
+            console.log("=== TROVE_MANAGER ===", TROVE_MANAGER)
         })
     })
 
@@ -113,8 +117,6 @@ contract("SharedTrove", function(accounts) {
         })
 
         it("Open a new trove with multiple users", async () => {
-            const _depositETHAmount = web3.utils.toWei('2', 'ether')  /// 2 ETH
-
             const _maxFee = web3.utils.toWei('0.05', 'ether')     /// minimum 5% (This percentage should be more than 5e15) 
             const _LUSDAmount = web3.utils.toWei('1950', 'ether') /// MIN_NET_DEBT = 1950e18 (Therefore, _LUSDAmount should be more than 1950 LUSD)
             const _upperHint = user1
