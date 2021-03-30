@@ -12,6 +12,7 @@ const tokenAddressList = require("../../migrations/addressesList/tokenAddress/to
 /// Artifact of smart contracts 
 const SharedTrove = artifacts.require("SharedTrove")
 const SharedTroveFactory = artifacts.require("SharedTroveFactory")
+const BorrowerOperations = artifacts.require("BorrowerOperations")
 const IBorrowerOperations = artifacts.require("IBorrowerOperations")
 const ITroveManager = artifacts.require("ITroveManager")
 
@@ -37,8 +38,18 @@ contract("SharedTrove", function(accounts) {
     /// Global variable for each contract addresses
     let SHARED_TROVE
     let SHARED_TROVE_FACTORY
-    let BORROWER_OPERATIONS = contractAddressList["Kovan"]["Liquity"]["borrowerOperations"]
+    let BORROWER_OPERATIONS
+    //let BORROWER_OPERATIONS = contractAddressList["Kovan"]["Liquity"]["borrowerOperations"]
     let TROVE_MANAGER = contractAddressList["Kovan"]["Liquity"]["troveManager"]
+    let ACTIVE_POOL = contractAddressList["Kovan"]["Liquity"]["activePool"]
+    let DEFAULT_POOL = contractAddressList["Kovan"]["Liquity"]["defaultPool"]
+    let STABILITY_POOL = contractAddressList["Kovan"]["Liquity"]["stabilityPool"]
+    let GAS_POOL = contractAddressList["Kovan"]["Liquity"]["gasPool"]
+    let COLL_SURPLUS_POOL = contractAddressList["Kovan"]["Liquity"]["collSurplusPool"]
+    let PRICE_FEED = contractAddressList["Kovan"]["Liquity"]["priceFeed"]
+    let SORTED_TROVES = contractAddressList["Kovan"]["Liquity"]["sortedTroves"]
+    let LUSD_TOKEN = contractAddressList["Kovan"]["Liquity"]["lusdToken"]
+    let LQTY_STAKING = contractAddressList["Kovan"]["Liquity"]["lqtyStaking"]
 
     /// Global variable for each shared-trove
     let sharedTrove1
@@ -64,6 +75,21 @@ contract("SharedTrove", function(accounts) {
     } 
 
     describe("Setup smart-contracts", () => {
+        it("Deploy the BorrowerOperations contract instance", async () => {
+            borrowerOperations = await BorrowerOperations.new(TROVE_MANAGER,
+                                                               ACTIVE_POOL, 
+                                                               DEFAULT_POOL, 
+                                                               STABILITY_POOL, 
+                                                               GAS_POOL, 
+                                                               COLL_SURPLUS_POOL, 
+                                                               PRICE_FEED,
+                                                               SORTED_TROVES,
+                                                               LUSD_TOKEN,
+                                                               LQTY_STAKING, 
+                                                               { from: deployer })
+            BORROWER_OPERATIONS = borrowerOperations.address
+        })
+
         it("Deploy the SharedTroveFactory contract instance", async () => {
             sharedTroveFactory = await SharedTroveFactory.new(BORROWER_OPERATIONS, { from: deployer })
             //sharedTroveFactory = await SharedTroveFactory.new(BORROWER_OPERATIONS, TROVE_MANAGER, { from: deployer })
@@ -126,8 +152,8 @@ contract("SharedTrove", function(accounts) {
 
             /// [Test]: Execute openTrove() method by using the BorrowerOperations.sol
             /// [Note]: Transfer 2 ETH as a collateral
-            // borrowerOperations = await IBorrowerOperations.at(BORROWER_OPERATIONS)
-            //let txReceipt2 = await borrowerOperations.openTrove(_maxFee, _LUSDAmount, _upperHint, _lowerHint, { from: user1, value: web3.utils.toWei('2', 'ether') })  /// [Result]: Error of "BorrowerOps: Trove is active."
+            //borrowerOperations = await IBorrowerOperations.at(BORROWER_OPERATIONS)
+            let txReceipt2 = await borrowerOperations.openTrove(_maxFee, _LUSDAmount, _upperHint, _lowerHint, { from: user1, value: web3.utils.toWei('2', 'ether') })  /// [Result]: Error of "BorrowerOps: Trove is active."
 
             /// [Note]: MCR (Minimum collateral ratio for individual troves) should be more than 110%
             ///         Therefore, ETH balance of the SharedTrove1 contract (pool) should be more than around 1.5 ETH.
