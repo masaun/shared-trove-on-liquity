@@ -118,13 +118,19 @@ contract("SharedTrove", function(accounts) {
 
         it("Open a new trove with multiple users", async () => {
             const _maxFee = web3.utils.toWei('0.05', 'ether')     /// minimum 5% (This percentage should be more than 5e15) 
-            const _LUSDAmount = web3.utils.toWei('1950', 'ether') /// MIN_NET_DEBT = 1950e18 (Therefore, _LUSDAmount should be more than 1950 LUSD)
+            const _LUSDAmount = web3.utils.toWei('2000', 'ether') /// MIN_NET_DEBT = 1950e18 (Therefore, _LUSDAmount should be more than 1950 LUSD)
             const _upperHint = user1
             const _lowerHint = user2
 
+            /// [Test]: Execute openTrove() method by using the BorrowerOperations.sol
+            /// [Note]: Transfer 2 ETH as a collateral
+            borrowerOperations = await IBorrowerOperations.at(BORROWER_OPERATIONS)
+            let txReceipt2 = await borrowerOperations.openTrove(_maxFee, _LUSDAmount, _upperHint, _lowerHint, { from: user1, value: web3.utils.toWei('2', 'ether') })
+
+
             /// [Note]: MCR (Minimum collateral ratio for individual troves) should be more than 110%
             ///         Therefore, ETH balance of the SharedTrove1 contract (pool) should be more than around 1.5 ETH.
-            let txReceipt1 = await sharedTrove1.openTroveWithMultipleUsers(_depositETHAmount, _maxFee, _LUSDAmount, _upperHint, _lowerHint, { from: user1 })
+            //let txReceipt1 = await sharedTrove1.openTroveWithMultipleUsers(_maxFee, _LUSDAmount, _upperHint, _lowerHint, { from: user1 })
         })
     })
 
