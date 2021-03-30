@@ -13,16 +13,17 @@ import { SharedPool } from "./SharedPool.sol";
 contract SharedTrove is SharedPool {
 
     IBorrowerOperations public borrowerOperations;
-    ITroveManager public troveManager;
+    //ITroveManager public troveManager;
 
     address payable BORROWER_OPERATIONS;
     address payable TROVE_MANAGER;
 
-    constructor(IBorrowerOperations _borrowerOperations, ITroveManager _troveManager) public SharedPool() {
+    constructor(IBorrowerOperations _borrowerOperations) public SharedPool() {
+    //constructor(IBorrowerOperations _borrowerOperations, ITroveManager _troveManager) public SharedPool() {
         borrowerOperations = _borrowerOperations;
-        troveManager = _troveManager;
+        //troveManager = _troveManager;
         BORROWER_OPERATIONS = address(uint160(address(_borrowerOperations)));  /// Payable
-        TROVE_MANAGER = address(uint160(address(_troveManager)));              /// Payable
+        //TROVE_MANAGER = address(uint160(address(_troveManager)));              /// Payable
     }
 
     /**

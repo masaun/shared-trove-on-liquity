@@ -50,4 +50,14 @@ contract SharedPool {
         return currentSharedMemberId.add(1);
     }
 
+
+    ///-----------------------------
+    /// Receive ETH
+    ///-----------------------------
+    event Received(address, uint);
+    receive() external payable {
+        emit Received(msg.sender, msg.value);
+    }
+
+
 }

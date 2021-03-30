@@ -65,14 +65,10 @@ contract("SharedTrove", function(accounts) {
 
     describe("Setup smart-contracts", () => {
         it("Deploy the SharedTroveFactory contract instance", async () => {
-            sharedTroveFactory = await SharedTroveFactory.new(BORROWER_OPERATIONS, TROVE_MANAGER, { from: deployer })
+            sharedTroveFactory = await SharedTroveFactory.new(BORROWER_OPERATIONS, { from: deployer })
+            //sharedTroveFactory = await SharedTroveFactory.new(BORROWER_OPERATIONS, TROVE_MANAGER, { from: deployer })
             SHARED_TROVE_FACTORY = sharedTroveFactory.address
         })
-
-        // it("Retrieve event log of SharedTroveCreated in the SharedTroveFactory contract", async () => {
-        //     let SharedTroveCreated = await getEvents(sharedTroveFactory, "SharedTroveCreated")
-        //     console.log("=== event log of SharedTroveCreated ===", SharedTroveCreated)            
-        // })
 
         it("[Log]: Deployed-contracts addresses", async () => {
             console.log("=== SHARED_TROVE_FACTORY ===", SHARED_TROVE_FACTORY)
@@ -117,7 +113,13 @@ contract("SharedTrove", function(accounts) {
         })
 
         it("Open a new trove with multiple users", async () => {
-            const _maxFee = web3.utils.toWei('0.05', 'ether')     /// minimum 5% (This percentage should be more than 5e15) 
+            /// [Note]: 1e18 == 100%
+            /// [Note]: 5e15 == minimum 0.5% (This percentage should be more than 0.5% == 5e15) 
+            const _maxFee = web3.utils.toWei('0.05', 'ether')    /// 5% == 5e16
+
+            //const _maxFee = 1000000000000000000; // 1e18 == 100%
+            //const _maxFee = "50000000000000000"; // 5e16 == 5%
+
             const _LUSDAmount = web3.utils.toWei('2200', 'ether') /// MIN_NET_DEBT = 1950e18 (Therefore, _LUSDAmount should be more than 1950 LUSD)
             const _upperHint = user2
             const _lowerHint = user3
@@ -126,7 +128,6 @@ contract("SharedTrove", function(accounts) {
             /// [Note]: Transfer 2 ETH as a collateral
             // borrowerOperations = await IBorrowerOperations.at(BORROWER_OPERATIONS)
             //let txReceipt2 = await borrowerOperations.openTrove(_maxFee, _LUSDAmount, _upperHint, _lowerHint, { from: user1, value: web3.utils.toWei('2', 'ether') })  /// [Result]: Error of "BorrowerOps: Trove is active."
-
 
             /// [Note]: MCR (Minimum collateral ratio for individual troves) should be more than 110%
             ///         Therefore, ETH balance of the SharedTrove1 contract (pool) should be more than around 1.5 ETH.
