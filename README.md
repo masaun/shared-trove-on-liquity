@@ -57,11 +57,15 @@ $ ganache-cli -d --fork https://kovan.infura.io/v3/{YOUR INFURA KEY}@{BLOCK_NUMB
 <br>
 
 - 2: Execute test of the smart-contracts (on the local)
+  - Test for the BorrowerOperations contract
+    `$ npm run test:BorrowerOperations`
+    ($ truffle test ./test/test-local/BorrowerOperations.test.js)
+
   - Test for the SharedTroveFactory contract
     `$ npm run test:SharedTroveFactory`
     ($ truffle test ./test/test-local/SharedTroveFactory.test.js)
 
-  - Test for the SharedTrove contract
+  - Test for the SharedTrove contract  <= Main test
     `$ npm run test:SharedTrove`
     ($ truffle test ./test/test-local/SharedTrove.test.js)
 
@@ -75,5 +79,7 @@ $ ganache-cli -d --fork https://kovan.infura.io/v3/{YOUR INFURA KEY}@{BLOCK_NUMB
   - GR9 Prize：https://gitcoin.co/issue/liquity/beta/4/100025007
   - dApp on Kovan：https://devui.liquity.org/latest/
   - Smart contract：https://github.com/liquity/beta
+    - Interfaces: 
+    - Proxy scripts:
   - Deployed-addresses on Kovan：https://github.com/liquity/liquity/blob/master/packages/lib-ethers/deployments/default/kovan.json
 

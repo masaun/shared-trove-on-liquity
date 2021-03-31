@@ -106,7 +106,8 @@ contract("BorrowerOperations", function(accounts) {
             const _upperHint = "0x0224588b20e1042264F0B55687cEAA450EEfc300"
             const _lowerHint = "0xCE6339181bA6257A339C66f06FC367298b5987E3"
 
-            let txReceipt1 = await borrowerOperations.adjustTrove(_maxFee, _collWithdrawal, _debtChange, _isDebtIncrease, _upperHint, _lowerHint, { from: user3, value: _collateralETHAmount })
+            /// [Note]: msg.sender must be same user's address with when a trove is opened
+            let txReceipt1 = await borrowerOperations.adjustTrove(_maxFee, _collWithdrawal, _debtChange, _isDebtIncrease, _upperHint, _lowerHint, { from: user1, value: _collateralETHAmount })
         })
 
         it("Withdraw collateral ETH from a existing trove", async () => {
