@@ -158,7 +158,7 @@ contract("SharedTrove", function(accounts) {
 
             /// [Note]: Open a new trove by depositing 3 ETH as a collateral
             /// [Note]: MCR (Minimum collateral ratio for individual troves) should be more than 110% (Roughly more than 1.5 ETH is needed)
-            let txReceipt1 = await sharedTrove1.openTroveWithMultipleUsers(_collateralETHAmount, _maxFee, _LUSDAmount, _upperHint, _lowerHint, { from: user3 })
+            let txReceipt1 = await sharedTrove1.openTroveWithMultipleUsers(_collateralETHAmount, _maxFee, _LUSDAmount, _upperHint, _lowerHint, { from: user1 })
         })
 
         it("LUSD Token balance of the SharedTrove1 pool contract should be 2000 LUSD", async () => {
@@ -178,7 +178,7 @@ contract("SharedTrove", function(accounts) {
             const _upperHint = "0x0224588b20e1042264F0B55687cEAA450EEfc300"
             const _lowerHint = "0xCE6339181bA6257A339C66f06FC367298b5987E3"
 
-            let txReceipt1 = await sharedTrove1.adjustTroveWithMultipleUsers(_collateralETHAmount, _maxFee, _collWithdrawal, _debtChange, _isDebtIncrease, _upperHint, _lowerHint, { from: user3 })  /// [Result]: Successful
+            let txReceipt1 = await sharedTrove1.adjustTroveWithMultipleUsers(_collateralETHAmount, _maxFee, _collWithdrawal, _debtChange, _isDebtIncrease, _upperHint, _lowerHint, { from: user1 })  /// [Result]: Successful
         })
 
         it("LUSD Token balance of the SharedTrove1 pool contract should be 2100 LUSD", async () => {
