@@ -47,7 +47,12 @@ $ npm run migrate:local
 <br>
 
 ### ③ Test (Kovan testnet-fork approach)
-- 1: Start ganache-cli with kovan testnet-fork (using Infura Key of Kovan tesntnet)
+- 1: Get API-key from Infura  
+https://infura.io/
+
+<br>
+
+- 2: Start ganache-cli with kovan testnet-fork (using Infura Key of Kovan tesntnet)
 ```
 $ ganache-cli -d --fork https://kovan.infura.io/v3/{YOUR INFURA KEY OF KOVAN}
 ```
@@ -57,17 +62,17 @@ $ ganache-cli -d --fork https://kovan.infura.io/v3/{YOUR INFURA KEY OF KOVAN}
 <br>
 
 - 2: Execute test of the smart-contracts (on the local)
-  - Test for the BorrowerOperations contract
-    `$ npm run test:BorrowerOperations`
-    ($ truffle test ./test/test-local/BorrowerOperations.test.js)
+  - [Main test]: Test for the SharedTrove contract
+    `$ npm run test:SharedTrove`  
+    ($ truffle test ./test/test-local/SharedTrove.test.js)  
 
-  - Test for the SharedTroveFactory contract
-    `$ npm run test:SharedTroveFactory`
-    ($ truffle test ./test/test-local/SharedTroveFactory.test.js)
+  - [Sub test]: Test for the SharedTroveFactory contract  
+    `$ npm run test:SharedTroveFactory`  
+    ($ truffle test ./test/test-local/SharedTroveFactory.test.js)  
 
-  - Test for the SharedTrove contract  <= Main test
-    `$ npm run test:SharedTrove`
-    ($ truffle test ./test/test-local/SharedTrove.test.js)
+  - [Sub test]: Test for the BorrowerOperations contract  
+    `$ npm run test:BorrowerOperations`  
+    ($ truffle test ./test/test-local/BorrowerOperations.test.js)  
 
 <br>
 
