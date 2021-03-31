@@ -12,8 +12,9 @@ const tokenAddressList = require("../../migrations/addressesList/tokenAddress/to
 /// Artifact of smart contracts 
 const SharedTrove = artifacts.require("SharedTrove")
 const SharedTroveFactory = artifacts.require("SharedTroveFactory")
+const BorrowerOperations = artifacts.require("BorrowerOperations")
 const IBorrowerOperations = artifacts.require("IBorrowerOperations")
-const ITroveManager = artifacts.require("ITroveManager")
+const ILUSDToken = artifacts.require("ILUSDToken")
 
 
 /**
@@ -32,13 +33,23 @@ contract("SharedTrove", function(accounts) {
     let sharedTrove
     let sharedTroveFactory
     let borrowerOperations
-    let troveManager
+    let lusdToken
 
     /// Global variable for each contract addresses
     let SHARED_TROVE
     let SHARED_TROVE_FACTORY
+    //let BORROWER_OPERATIONS
     let BORROWER_OPERATIONS = contractAddressList["Kovan"]["Liquity"]["borrowerOperations"]
     let TROVE_MANAGER = contractAddressList["Kovan"]["Liquity"]["troveManager"]
+    let ACTIVE_POOL = contractAddressList["Kovan"]["Liquity"]["activePool"]
+    let DEFAULT_POOL = contractAddressList["Kovan"]["Liquity"]["defaultPool"]
+    let STABILITY_POOL = contractAddressList["Kovan"]["Liquity"]["stabilityPool"]
+    let GAS_POOL = contractAddressList["Kovan"]["Liquity"]["gasPool"]
+    let COLL_SURPLUS_POOL = contractAddressList["Kovan"]["Liquity"]["collSurplusPool"]
+    let PRICE_FEED = contractAddressList["Kovan"]["Liquity"]["priceFeed"]
+    let SORTED_TROVES = contractAddressList["Kovan"]["Liquity"]["sortedTroves"]
+    let LUSD_TOKEN = tokenAddressList["Kovan"]["Liquity"]["lusdToken"]
+    let LQTY_STAKING = contractAddressList["Kovan"]["Liquity"]["lqtyStaking"]
 
     /// Global variable for each shared-trove
     let sharedTrove1
@@ -64,22 +75,72 @@ contract("SharedTrove", function(accounts) {
     } 
 
     describe("Setup smart-contracts", () => {
-        it("Deploy the SharedTroveFactory contract instance", async () => {
-            sharedTroveFactory = await SharedTroveFactory.new(BORROWER_OPERATIONS, TROVE_MANAGER, { from: deployer })
-            SHARED_TROVE_FACTORY = sharedTroveFactory.address
+        it("Create the LUSDToken contract instance", async () => {
+            lusdToken = await ILUSDToken.at(LUSD_TOKEN)
+        })
+        
+        it("Create the BorrowerOperations contract instance", async () => {
+            borrowerOperations = await IBorrowerOperations.at(BORROWER_OPERATIONS)
         })
 
-        // it("Retrieve event log of SharedTroveCreated in the SharedTroveFactory contract", async () => {
-        //     let SharedTroveCreated = await getEvents(sharedTroveFactory, "SharedTroveCreated")
-        //     console.log("=== event log of SharedTroveCreated ===", SharedTroveCreated)            
+        // it("Deploy the BorrowerOperations contract", async () => {
+        //     borrowerOperations = await BorrowerOperations.new(TROVE_MANAGER,
+        //                                                        ACTIVE_POOL, 
+        //                                                        DEFAULT_POOL, 
+        //                                                        STABILITY_POOL, 
+        //                                                        GAS_POOL, 
+        //                                                        COLL_SURPLUS_POOL, 
+        //                                                        PRICE_FEED,
+        //                                                        SORTED_TROVES,
+        //                                                        LUSD_TOKEN,
+        //                                                        LQTY_STAKING, 
+        //                                                        { from: deployer })
+        //     BORROWER_OPERATIONS = borrowerOperations.address
         // })
+
+        it("Deploy the SharedTroveFactory contract", async () => {
+            sharedTroveFactory = await SharedTroveFactory.new(BORROWER_OPERATIONS, { from: deployer })
+            //sharedTroveFactory = await SharedTroveFactory.new(BORROWER_OPERATIONS, TROVE_MANAGER, { from: deployer })
+            SHARED_TROVE_FACTORY = sharedTroveFactory.address
+        })
 
         it("[Log]: Deployed-contracts addresses", async () => {
             console.log("=== SHARED_TROVE_FACTORY ===", SHARED_TROVE_FACTORY)
             console.log("=== BORROWER_OPERATIONS ===", BORROWER_OPERATIONS)
-            console.log("=== TROVE_MANAGER ===", TROVE_MANAGER)
+            console.log("=== LUSD_TOKEN ===", LUSD_TOKEN)
         })
     })
+
+    describe("BorrowerOperations", () => {
+        it("Open a new trove", async () => {
+            /// [Note]: 1e18 == 100%
+            /// [Note]: 5e15 == minimum 0.5% (This percentage should be more than 0.5% == 5e15) 
+            const _maxFee = web3.utils.toWei('0.05', 'ether')     /// 5% == 5e16
+            const _LUSDAmount = web3.utils.toWei('2000', 'ether') /// MIN_NET_DEBT = 1950e18 (Therefore, _LUSDAmount should be more than 1950 LUSD)
+            const _upperHint = user2
+            const _lowerHint = user3
+
+            const _collateralETH = web3.utils.toWei('3', 'ether')
+
+            /// [Test]: Execute openTrove() method by using the BorrowerOperations.sol
+            /// [Note]: Transfer 2 ETH as a collateral
+            let txReceipt = await borrowerOperations.openTrove(_maxFee, _LUSDAmount, _upperHint, _lowerHint, { from: user1, value: _collateralETH })  /// [Result]: Successful. (Be able to retrieve 3 events)
+        })
+
+        it("LUSD Token balance of user1 should be 2000 LUSD", async () => {
+            let _LUSDBalance = await lusdToken.balanceOf(user1)
+            let LUSDBalance = String(_LUSDBalance)
+            let LUSD_BALANCE = web3.utils.fromWei(LUSDBalance, 'ether')
+            console.log('=== LUSD Token Balance of user1 ===', web3.utils.fromWei(LUSDBalance, 'ether'))
+            assert.equal(LUSD_BALANCE, "2000", "LUSD Token balance of user1 should be 2000 LUSD")
+        })        
+
+        // it("Close a existing trove", async () => {
+        //     /// [Note]: Caller of closeTrove() method must be the BorrowerOperations contract
+        //     let txReceipt = await borrowerOperations.closeTrove({ from: user1 })  /// [Result]: 
+        // })
+    })
+
 
     describe("SharedTroveFactory", () => {
         it("A new shared-trove should be created", async () => {
@@ -117,20 +178,17 @@ contract("SharedTrove", function(accounts) {
         })
 
         it("Open a new trove with multiple users", async () => {
-            const _maxFee = web3.utils.toWei('0.05', 'ether')     /// minimum 5% (This percentage should be more than 5e15) 
-            const _LUSDAmount = web3.utils.toWei('2200', 'ether') /// MIN_NET_DEBT = 1950e18 (Therefore, _LUSDAmount should be more than 1950 LUSD)
+            /// [Note]: 1e18 == 100%
+            /// [Note]: 5e15 == minimum 0.5% (This percentage should be more than 0.5% == 5e15) 
+            const _maxFee = web3.utils.toWei('0.05', 'ether')     /// 5% == 5e16
+            const _LUSDAmount = web3.utils.toWei('2000', 'ether') /// MIN_NET_DEBT = 1950e18 (Therefore, _LUSDAmount should be more than 1950 LUSD)
             const _upperHint = user2
             const _lowerHint = user3
 
-            /// [Test]: Execute openTrove() method by using the BorrowerOperations.sol
             /// [Note]: Transfer 2 ETH as a collateral
-            // borrowerOperations = await IBorrowerOperations.at(BORROWER_OPERATIONS)
-            //let txReceipt2 = await borrowerOperations.openTrove(_maxFee, _LUSDAmount, _upperHint, _lowerHint, { from: user1, value: web3.utils.toWei('2', 'ether') })  /// [Result]: Error of "BorrowerOps: Trove is active."
-
-
             /// [Note]: MCR (Minimum collateral ratio for individual troves) should be more than 110%
             ///         Therefore, ETH balance of the SharedTrove1 contract (pool) should be more than around 1.5 ETH.
-            let txReceipt1 = await sharedTrove1.openTroveWithMultipleUsers(_maxFee, _LUSDAmount, _upperHint, _lowerHint, { from: user1 })
+            let txReceipt1 = await sharedTrove1.openTroveWithMultipleUsers(_maxFee, _LUSDAmount, _upperHint, _lowerHint, { from: user3 })
         })
     })
 
