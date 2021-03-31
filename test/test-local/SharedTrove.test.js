@@ -75,12 +75,12 @@ contract("SharedTrove", function(accounts) {
     } 
 
     describe("Setup smart-contracts", () => {
-        it("Create the BorrowerOperations contract instance", async () => {
-            borrowerOperations = await IBorrowerOperations.at(BORROWER_OPERATIONS)
-        })
-
         it("Create the LUSDToken contract instance", async () => {
             lusdToken = await ILUSDToken.at(LUSD_TOKEN)
+        })
+        
+        it("Create the BorrowerOperations contract instance", async () => {
+            borrowerOperations = await IBorrowerOperations.at(BORROWER_OPERATIONS)
         })
 
         // it("Deploy the BorrowerOperations contract", async () => {
@@ -111,7 +111,7 @@ contract("SharedTrove", function(accounts) {
         })
     })
 
-    describe("BorrowerOperations and TroveManager", () => {
+    describe("BorrowerOperations", () => {
         it("Open a new trove", async () => {
             /// [Note]: 1e18 == 100%
             /// [Note]: 5e15 == minimum 0.5% (This percentage should be more than 0.5% == 5e15) 
