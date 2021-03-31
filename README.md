@@ -62,7 +62,7 @@ $ ganache-cli -d --fork https://kovan.infura.io/v3/{YOUR INFURA KEY OF KOVAN}
 <br>
 
 - 2: Execute test of the smart-contracts (on the local)
-  - [Main test]: Test for the SharedTrove contract
+  - [Main test]: Test for the SharedTrove contract  
     `$ npm run test:SharedTrove`  
     ($ truffle test ./test/test-local/SharedTrove.test.js)  
 
