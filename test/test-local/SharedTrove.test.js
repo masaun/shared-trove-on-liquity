@@ -102,15 +102,15 @@ contract("SharedTrove", function(accounts) {
             sharedTrove1 = await SharedTrove.at(SHARED_TROVE_1, { from: deployer })
         })
 
-        it("1 ETH should be deposited into the SharedTrove1 from user1, 2, 3", async () => {
-            const _depositETHAmount = web3.utils.toWei('1', 'ether')  /// 1 ETH
+        it("2 ETH should be deposited into the SharedTrove1 from user1, 2, 3", async () => {
+            const _depositETHAmount = web3.utils.toWei('2', 'ether')  /// 2 ETH
 
             let txReceipt1 = await sharedTrove1.depositToSharedPool({ from: user1, value: _depositETHAmount })
             let txReceipt2 = await sharedTrove1.depositToSharedPool({ from: user2, value: _depositETHAmount })
             let txReceipt3 = await sharedTrove1.depositToSharedPool({ from: user3, value: _depositETHAmount })
         })
 
-        it("ETH balance of the SharedTrove1 pool contract (pool) should be 3 ETH", async () => {
+        it("ETH balance of the SharedTrove1 pool contract should be 3 ETH", async () => {
             /// [Note]: MCR (Minimum collateral ratio for individual troves) should be more than 110%
             ///         Therefore, ETH balance of the SharedTrove1 contract (pool) should be more than around 1.5 ETH.
             let _ethBalance = await sharedTrove1.getETHBalance()
@@ -151,7 +151,7 @@ contract("SharedTrove", function(accounts) {
             const _upperHint = "0x0224588b20e1042264F0B55687cEAA450EEfc300"
             const _lowerHint = "0xCE6339181bA6257A339C66f06FC367298b5987E3"
 
-            let txReceipt1 = await sharedTrove1.adjustTroveWithMultipleUsers(_collateralETHAmount, _maxFee, _collWithdrawal, _debtChange, _isDebtIncrease, _upperHint, _lowerHint, { from: user1 })  /// [Result]: Successful
+            let txReceipt1 = await sharedTrove1.adjustTroveWithMultipleUsers(_collateralETHAmount, _maxFee, _collWithdrawal, _debtChange, _isDebtIncrease, _upperHint, _lowerHint, { from: user1 })  /// [Result]:
         })
 
         it("LUSD Token balance of the SharedTrove1 pool contract should be 2100 LUSD", async () => {
