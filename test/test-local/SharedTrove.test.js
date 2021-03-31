@@ -78,7 +78,7 @@ contract("SharedTrove", function(accounts) {
         it("Create the LUSDToken contract instance", async () => {
             lusdToken = await ILUSDToken.at(LUSD_TOKEN)
         })
-        
+
         it("Create the BorrowerOperations contract instance", async () => {
             borrowerOperations = await IBorrowerOperations.at(BORROWER_OPERATIONS)
         })
@@ -178,6 +178,8 @@ contract("SharedTrove", function(accounts) {
         })
 
         it("Open a new trove with multiple users", async () => {
+            const _collateralETHAmount = web3.utils.toWei('3', 'ether') /// 3 ETH
+
             /// [Note]: 1e18 == 100%
             /// [Note]: 5e15 == minimum 0.5% (This percentage should be more than 0.5% == 5e15) 
             const _maxFee = web3.utils.toWei('0.05', 'ether')     /// 5% == 5e16
@@ -185,10 +187,10 @@ contract("SharedTrove", function(accounts) {
             const _upperHint = user2
             const _lowerHint = user3
 
-            /// [Note]: Transfer 2 ETH as a collateral
+            /// [Note]: Open a new trove by depositing 3 ETH as a collateral
             /// [Note]: MCR (Minimum collateral ratio for individual troves) should be more than 110%
             ///         Therefore, ETH balance of the SharedTrove1 contract (pool) should be more than around 1.5 ETH.
-            let txReceipt1 = await sharedTrove1.openTroveWithMultipleUsers(_maxFee, _LUSDAmount, _upperHint, _lowerHint, { from: user3 })
+            let txReceipt1 = await sharedTrove1.openTroveWithMultipleUsers(_collateralETHAmount, _maxFee, _LUSDAmount, _upperHint, _lowerHint, { from: user3 })
         })
     })
 
