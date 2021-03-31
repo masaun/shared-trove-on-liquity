@@ -14,7 +14,7 @@ const SharedTrove = artifacts.require("SharedTrove")
 const SharedTroveFactory = artifacts.require("SharedTroveFactory")
 const BorrowerOperations = artifacts.require("BorrowerOperations")
 const IBorrowerOperations = artifacts.require("IBorrowerOperations")
-const ITroveManager = artifacts.require("ITroveManager")
+const ILUSDToken = artifacts.require("ILUSDToken")
 
 
 /**
@@ -33,6 +33,7 @@ contract("SharedTrove", function(accounts) {
     let sharedTrove
     let sharedTroveFactory
     let borrowerOperations
+    let lusdToken
 
     /// Global variable for each contract addresses
     let SHARED_TROVE
@@ -47,7 +48,7 @@ contract("SharedTrove", function(accounts) {
     let COLL_SURPLUS_POOL = contractAddressList["Kovan"]["Liquity"]["collSurplusPool"]
     let PRICE_FEED = contractAddressList["Kovan"]["Liquity"]["priceFeed"]
     let SORTED_TROVES = contractAddressList["Kovan"]["Liquity"]["sortedTroves"]
-    let LUSD_TOKEN = contractAddressList["Kovan"]["Liquity"]["lusdToken"]
+    let LUSD_TOKEN = tokenAddressList["Kovan"]["Liquity"]["lusdToken"]
     let LQTY_STAKING = contractAddressList["Kovan"]["Liquity"]["lqtyStaking"]
 
     /// Global variable for each shared-trove
@@ -78,6 +79,10 @@ contract("SharedTrove", function(accounts) {
             borrowerOperations = await IBorrowerOperations.at(BORROWER_OPERATIONS)
         })
 
+        it("Create the LUSDToken contract instance", async () => {
+            lusdToken = await ILUSDToken.at(LUSD_TOKEN)
+        })
+
         // it("Deploy the BorrowerOperations contract", async () => {
         //     borrowerOperations = await BorrowerOperations.new(TROVE_MANAGER,
         //                                                        ACTIVE_POOL, 
@@ -102,11 +107,12 @@ contract("SharedTrove", function(accounts) {
         it("[Log]: Deployed-contracts addresses", async () => {
             console.log("=== SHARED_TROVE_FACTORY ===", SHARED_TROVE_FACTORY)
             console.log("=== BORROWER_OPERATIONS ===", BORROWER_OPERATIONS)
+            console.log("=== LUSD_TOKEN ===", LUSD_TOKEN)
         })
     })
 
     describe("BorrowerOperations and TroveManager", () => {
-        it("Open a new trove (by user1)", async () => {
+        it("Open a new trove", async () => {
             /// [Note]: 1e18 == 100%
             /// [Note]: 5e15 == minimum 0.5% (This percentage should be more than 0.5% == 5e15) 
             const _maxFee = web3.utils.toWei('0.05', 'ether')     /// 5% == 5e16
@@ -119,8 +125,14 @@ contract("SharedTrove", function(accounts) {
             let txReceipt = await borrowerOperations.openTrove(_maxFee, _LUSDAmount, _upperHint, _lowerHint, { from: user1, value: web3.utils.toWei('2', 'ether') })  /// [Result]: Successful. (Be able to retrieve 3 events)
         })
 
-        it("Close a existing trove (by user1)", async () => {
-            /// [Note]: Caller must be the BorrowerOperations contract
+        it("Check LUSD Token balance of user1", async () => {
+            let _LUSDBalance = await lusdToken.balanceOf(user1)
+            let LUSDBalance = String(_LUSDBalance)
+            console.log('=== LUSD Token Balance of user1 ===', web3.utils.fromWei(LUSDBalance, 'ether'))
+        })        
+
+        it("Close a existing trove", async () => {
+            /// [Note]: Caller of closeTrove() method must be the BorrowerOperations contract
             let txReceipt = await borrowerOperations.closeTrove({ from: user1 })  /// [Result]: 
         })
 
