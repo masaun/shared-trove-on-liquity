@@ -79,8 +79,8 @@ contract("BorrowerOperations", function(accounts) {
             /// [Note]: 5e15 == minimum 0.5% (This percentage should be more than 0.5% == 5e15) 
             const _maxFee = web3.utils.toWei('0.05', 'ether')     /// 5% == 5e16
             const _LUSDAmount = web3.utils.toWei('2000', 'ether') /// MIN_NET_DEBT = 1950e18 (Therefore, _LUSDAmount should be more than 1950 LUSD)
-            const _upperHint = user2
-            const _lowerHint = user3
+            const _upperHint = "0x86242C99D115b17447d48780Ca7E49088B780275"
+            const _lowerHint = "0x978B86E32Db4D364d15aEbd1622d5c6a74E9A364"
 
             const _collateralETH = web3.utils.toWei('3', 'ether')
 
