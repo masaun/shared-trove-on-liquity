@@ -95,7 +95,7 @@ contract("BorrowerOperations", function(accounts) {
             let LUSD_BALANCE = web3.utils.fromWei(LUSDBalance, 'ether')
             console.log('=== LUSD Token Balance of user1 ===', web3.utils.fromWei(LUSDBalance, 'ether'))
             assert.equal(LUSD_BALANCE, "2000", "LUSD Token balance of user1 should be 2000 LUSD")
-        })        
+        })
 
         it("Adjust a existing trove. (Top-up 1 ETH as additional collateral and Receive 100 LUSD as additional debt)", async () => {
             const _collateralETHAmount = web3.utils.toWei('1', 'ether') /// 1 ETH as additional collateral
@@ -108,6 +108,14 @@ contract("BorrowerOperations", function(accounts) {
 
             /// [Note]: msg.sender must be same user's address with when a trove is opened
             let txReceipt1 = await borrowerOperations.adjustTrove(_maxFee, _collWithdrawal, _debtChange, _isDebtIncrease, _upperHint, _lowerHint, { from: user1, value: _collateralETHAmount })
+        })
+
+        it("LUSD Token balance of user1 should be 2100 LUSD", async () => {
+            let _LUSDBalance = await lusdToken.balanceOf(user1)
+            let LUSDBalance = String(_LUSDBalance)
+            let LUSD_BALANCE = web3.utils.fromWei(LUSDBalance, 'ether')
+            console.log('=== LUSD Token Balance of user1 ===', web3.utils.fromWei(LUSDBalance, 'ether'))
+            assert.equal(LUSD_BALANCE, "2100", "LUSD Token balance of user1 should be 2100 LUSD")
         })
 
         it("Withdraw collateral ETH from a existing trove", async () => {
