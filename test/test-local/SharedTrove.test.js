@@ -177,15 +177,15 @@ contract("SharedTrove", function(accounts) {
             console.log('=== ETH balance of the SharedTrove1 contract (pool) ===', ethBalance)
         })
 
-        it("Open a new trove with multiple users", async () => {
+        it("Open a new trove with multiple users. (Batched top-ups)", async () => {
             const _collateralETHAmount = web3.utils.toWei('3', 'ether') /// 3 ETH
 
             /// [Note]: 1e18 == 100%
             /// [Note]: 5e15 == minimum 0.5% (This percentage should be more than 0.5% == 5e15) 
             const _maxFee = web3.utils.toWei('0.05', 'ether')     /// 5% == 5e16
             const _LUSDAmount = web3.utils.toWei('2000', 'ether') /// MIN_NET_DEBT = 1950e18 (Therefore, _LUSDAmount should be more than 1950 LUSD)
-            const _upperHint = user2
-            const _lowerHint = user3
+            const _upperHint = "0x0224588b20e1042264F0B55687cEAA450EEfc300"
+            const _lowerHint = "0xCE6339181bA6257A339C66f06FC367298b5987E3"
 
             /// [Note]: Open a new trove by depositing 3 ETH as a collateral
             /// [Note]: MCR (Minimum collateral ratio for individual troves) should be more than 110%
