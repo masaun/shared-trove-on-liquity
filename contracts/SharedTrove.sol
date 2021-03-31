@@ -35,7 +35,10 @@ contract SharedTrove is SharedPool {
         //BORROWER_OPERATIONS.transfer(2 ether);
 
         /// [Note]: Pooled-ETH is deposited for opening a new trove.
-        borrowerOperations.openTrove(_maxFee, _LUSDAmount, _upperHint, _lowerHint);
+        borrowerOperations.openTrove{ value: 3e18 }(_maxFee, _LUSDAmount, _upperHint, _lowerHint);
+        //borrowerOperations.openTrove{ value: msg.value }(_maxFee, _LUSDAmount, _upperHint, _lowerHint);
+        
+        //borrowerOperations.openTrove(_maxFee, _LUSDAmount, _upperHint, _lowerHint);
     }
 
 
