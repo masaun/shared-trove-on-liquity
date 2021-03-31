@@ -168,7 +168,7 @@ contract("SharedTrove", function(accounts) {
             let txReceipt3 = await sharedTrove1.depositToSharedPool({ from: user3, value: _depositETHAmount })
         })
 
-        it("ETH balance of the SharedTrove1 contract (pool) should be 3 ETH", async () => {
+        it("ETH balance of the SharedTrove1 pool contract (pool) should be 3 ETH", async () => {
             /// [Note]: MCR (Minimum collateral ratio for individual troves) should be more than 110%
             ///         Therefore, ETH balance of the SharedTrove1 contract (pool) should be more than around 1.5 ETH.
             let _ethBalance = await sharedTrove1.getETHBalance()
@@ -188,9 +188,32 @@ contract("SharedTrove", function(accounts) {
             const _lowerHint = "0xCE6339181bA6257A339C66f06FC367298b5987E3"
 
             /// [Note]: Open a new trove by depositing 3 ETH as a collateral
-            /// [Note]: MCR (Minimum collateral ratio for individual troves) should be more than 110%
-            ///         Therefore, ETH balance of the SharedTrove1 contract (pool) should be more than around 1.5 ETH.
+            /// [Note]: MCR (Minimum collateral ratio for individual troves) should be more than 110% (Roughly more than 1.5 ETH is needed)
             let txReceipt1 = await sharedTrove1.openTroveWithMultipleUsers(_collateralETHAmount, _maxFee, _LUSDAmount, _upperHint, _lowerHint, { from: user3 })
+        })
+
+        it("LUSD Token balance of the SharedTrove1 pool contract should be 2000 LUSD", async () => {
+            let _LUSDBalance = await lusdToken.balanceOf(SHARED_TROVE_1)
+            let LUSDBalance = String(_LUSDBalance)
+            let LUSD_BALANCE = web3.utils.fromWei(LUSDBalance, 'ether')
+            console.log('=== LUSD Token Balance of the SharedTrove1 pool ===', web3.utils.fromWei(LUSDBalance, 'ether'))
+            assert.equal(LUSD_BALANCE, "2000", "LUSD Token balance of the SharedTrove1 pool should be 2000 LUSD")
+        })
+
+        it("Adjust a existing trove with multiple users. (Batched adjustment)", async () => {
+            const _collateralETHAmount = web3.utils.toWei('1', 'ether') /// 1 ETH as additional collateral
+            const _maxFee = web3.utils.toWei('0.05', 'ether')           /// 5% == 5e16
+            const _collWithdrawal = web3.utils.toWei('0', 'ether')      /// Withdrawn-ETH as a collateral is 0 ETH
+            const _debtChange = web3.utils.toWei('100', 'ether')        /// Debt 100 LUSD as additional debt 
+            const _isDebtIncrease = true
+            const _upperHint = "0x0224588b20e1042264F0B55687cEAA450EEfc300"
+            const _lowerHint = "0xCE6339181bA6257A339C66f06FC367298b5987E3"
+
+            let txReceipt1 = await sharedTrove1.adjustTroveWithMultipleUsers(_collateralETHAmount, _maxFee, _collWithdrawal, _debtChange, _isDebtIncrease, _upperHint, _lowerHint, { from: user3 })
+        })
+
+        it("Withdraw collateral ETH from a existing trove with multiple users. (Batched withdrawal)", async () => {
+            /// [Todo]:
         })
     })
 
