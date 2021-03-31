@@ -79,6 +79,10 @@ contract("SharedTrove", function(accounts) {
             borrowerOperations = await IBorrowerOperations.at(BORROWER_OPERATIONS)
         })
 
+        it("Create the TroveManager contract instance", async () => {
+            troveManager = await ITroveManager.at(TROVE_MANAGER)
+        })
+
         // it("Deploy the BorrowerOperations contract", async () => {
         //     borrowerOperations = await BorrowerOperations.new(TROVE_MANAGER,
         //                                                        ACTIVE_POOL, 
@@ -106,6 +110,28 @@ contract("SharedTrove", function(accounts) {
             console.log("=== TROVE_MANAGER ===", TROVE_MANAGER)
         })
     })
+
+    describe("BorrowerOperations and TroveManager", () => {
+        it("Open a new trove (by user1)", async () => {
+            /// [Note]: 1e18 == 100%
+            /// [Note]: 5e15 == minimum 0.5% (This percentage should be more than 0.5% == 5e15) 
+            const _maxFee = web3.utils.toWei('0.05', 'ether')     /// 5% == 5e16
+            const _LUSDAmount = web3.utils.toWei('2000', 'ether') /// MIN_NET_DEBT = 1950e18 (Therefore, _LUSDAmount should be more than 1950 LUSD)
+            const _upperHint = user2
+            const _lowerHint = user3
+
+            /// [Test]: Execute openTrove() method by using the BorrowerOperations.sol
+            /// [Note]: Transfer 2 ETH as a collateral
+            let txReceipt = await borrowerOperations.openTrove(_maxFee, _LUSDAmount, _upperHint, _lowerHint, { from: user1, value: web3.utils.toWei('2', 'ether') })  /// [Result]: Successful. (Be able to retrieve 3 events)
+        })
+
+        it("Close a existing trove (by user1)", async () => {
+            const _borrower = user1
+            let txReceipt = await troveManager.closeTrove(_borrower, { from: user1 })  /// [Result]: 
+        })
+
+    })
+
 
     describe("SharedTroveFactory", () => {
         it("A new shared-trove should be created", async () => {
@@ -150,13 +176,10 @@ contract("SharedTrove", function(accounts) {
             const _upperHint = user2
             const _lowerHint = user3
 
-            /// [Test]: Execute openTrove() method by using the BorrowerOperations.sol
             /// [Note]: Transfer 2 ETH as a collateral
-            let txReceipt2 = await borrowerOperations.openTrove(_maxFee, _LUSDAmount, _upperHint, _lowerHint, { from: deployer, value: web3.utils.toWei('2', 'ether') })  /// [Result]: Error of "BorrowerOps: Trove is active."
-
             /// [Note]: MCR (Minimum collateral ratio for individual troves) should be more than 110%
             ///         Therefore, ETH balance of the SharedTrove1 contract (pool) should be more than around 1.5 ETH.
-            //let txReceipt1 = await sharedTrove1.openTroveWithMultipleUsers(_maxFee, _LUSDAmount, _upperHint, _lowerHint, { from: user1 })
+            let txReceipt1 = await sharedTrove1.openTroveWithMultipleUsers(_maxFee, _LUSDAmount, _upperHint, _lowerHint, { from: user3 })
         })
     })
 
