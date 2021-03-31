@@ -171,54 +171,55 @@ contract BorrowerOperations is LiquityBase, Ownable, CheckContract, IBorrowerOpe
         if (_LUSDAmount > 0) {_requireValidMaxFeePercentage(_maxFeePercentage);}
         _requireTroveisNotActive(contractsCache.troveManager, msg.sender);
 
-        vars.price = priceFeed.fetchPrice();
+        // vars.price = priceFeed.fetchPrice();
 
-        vars.LUSDFee;
-        vars.netDebt = _LUSDAmount;
+        // vars.LUSDFee;
+        // vars.netDebt = _LUSDAmount;
 
-        bool isRecoveryMode = _checkRecoveryMode(vars.price);
+        // bool isRecoveryMode = _checkRecoveryMode(vars.price);
 
-        if (!isRecoveryMode && _LUSDAmount > 0) {
-            vars.LUSDFee = _triggerBorrowingFee(contractsCache.troveManager, contractsCache.lusdToken, _LUSDAmount, _maxFeePercentage);
-            vars.netDebt = vars.netDebt.add(vars.LUSDFee);
-        }
-        _requireAtLeastMinNetDebt(vars.netDebt);
+        // if (!isRecoveryMode && _LUSDAmount > 0) {
+        //     vars.LUSDFee = _triggerBorrowingFee(contractsCache.troveManager, contractsCache.lusdToken, _LUSDAmount, _maxFeePercentage);
+        //     vars.netDebt = vars.netDebt.add(vars.LUSDFee);
+        // }
+        // _requireAtLeastMinNetDebt(vars.netDebt);
 
-        // ICR is based on the composite debt, i.e. the requested LUSD amount + LUSD borrowing fee + LUSD gas comp.
-        vars.compositeDebt = _getCompositeDebt(vars.netDebt);
-        assert(vars.compositeDebt > 0);
+        // // ICR is based on the composite debt, i.e. the requested LUSD amount + LUSD borrowing fee + LUSD gas comp.
+        // vars.compositeDebt = _getCompositeDebt(vars.netDebt);
+        // assert(vars.compositeDebt > 0);
         
-        vars.ICR = LiquityMath._computeCR(msg.value, vars.compositeDebt, vars.price);
-        vars.NICR = LiquityMath._computeNominalCR(msg.value, vars.compositeDebt);
+        // vars.ICR = LiquityMath._computeCR(msg.value, vars.compositeDebt, vars.price);
+        // vars.NICR = LiquityMath._computeNominalCR(msg.value, vars.compositeDebt);
 
-        if (isRecoveryMode) {
-            _requireICRisAboveCCR(vars.ICR);
-        } else {
-            _requireICRisAboveMCR(vars.ICR);
-            uint newTCR = _getNewTCRFromTroveChange(msg.value, true, vars.compositeDebt, true, vars.price);  // bools: coll increase, debt increase
-            _requireNewTCRisAboveCCR(newTCR); 
-        }
+        // if (isRecoveryMode) {
+        //     _requireICRisAboveCCR(vars.ICR);
+        // } else {
+        //     _requireICRisAboveMCR(vars.ICR);
+        //     uint newTCR = _getNewTCRFromTroveChange(msg.value, true, vars.compositeDebt, true, vars.price);  // bools: coll increase, debt increase
+        //     _requireNewTCRisAboveCCR(newTCR); 
+        // }
 
-        // Set the trove struct's properties
-        contractsCache.troveManager.setTroveStatus(msg.sender, 1);
-        contractsCache.troveManager.increaseTroveColl(msg.sender, msg.value);
-        contractsCache.troveManager.increaseTroveDebt(msg.sender, vars.compositeDebt);
+        /// --- Set the trove struct's properties ----
 
-        contractsCache.troveManager.updateTroveRewardSnapshots(msg.sender);
-        vars.stake = contractsCache.troveManager.updateStakeAndTotalStakes(msg.sender);
+        // contractsCache.troveManager.setTroveStatus(msg.sender, 1);
+        // contractsCache.troveManager.increaseTroveColl(msg.sender, msg.value);
+        // contractsCache.troveManager.increaseTroveDebt(msg.sender, vars.compositeDebt);
 
-        sortedTroves.insert(msg.sender, vars.NICR, _upperHint, _lowerHint);
-        vars.arrayIndex = contractsCache.troveManager.addTroveOwnerToArray(msg.sender);
-        emit TroveCreated(msg.sender, vars.arrayIndex);
+        // contractsCache.troveManager.updateTroveRewardSnapshots(msg.sender);
+        // vars.stake = contractsCache.troveManager.updateStakeAndTotalStakes(msg.sender);
 
-        // Move the ether to the Active Pool, and mint the LUSDAmount to the borrower
-        _activePoolAddColl(contractsCache.activePool, msg.value);
-        if (_LUSDAmount > 0) {_withdrawLUSD(contractsCache.activePool, contractsCache.lusdToken, msg.sender, _LUSDAmount, vars.netDebt);}
-        // Move the LUSD gas compensation to the Gas Pool
-        _withdrawLUSD(contractsCache.activePool, contractsCache.lusdToken, gasPoolAddress, LUSD_GAS_COMPENSATION, LUSD_GAS_COMPENSATION);
+        // sortedTroves.insert(msg.sender, vars.NICR, _upperHint, _lowerHint);
+        // vars.arrayIndex = contractsCache.troveManager.addTroveOwnerToArray(msg.sender);
+        // emit TroveCreated(msg.sender, vars.arrayIndex);
 
-        emit TroveUpdated(msg.sender, vars.compositeDebt, msg.value, vars.stake, BorrowerOperation.openTrove);
-        emit LUSDBorrowingFeePaid(msg.sender, vars.LUSDFee);
+        // // Move the ether to the Active Pool, and mint the LUSDAmount to the borrower
+        // _activePoolAddColl(contractsCache.activePool, msg.value);
+        // if (_LUSDAmount > 0) {_withdrawLUSD(contractsCache.activePool, contractsCache.lusdToken, msg.sender, _LUSDAmount, vars.netDebt);}
+        // // Move the LUSD gas compensation to the Gas Pool
+        // _withdrawLUSD(contractsCache.activePool, contractsCache.lusdToken, gasPoolAddress, LUSD_GAS_COMPENSATION, LUSD_GAS_COMPENSATION);
+
+        // emit TroveUpdated(msg.sender, vars.compositeDebt, msg.value, vars.stake, BorrowerOperation.openTrove);
+        // emit LUSDBorrowingFeePaid(msg.sender, vars.LUSDFee);
     }
 
     // Send ETH as collateral to a trove
