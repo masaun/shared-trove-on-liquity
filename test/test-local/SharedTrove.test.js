@@ -33,7 +33,6 @@ contract("SharedTrove", function(accounts) {
     let sharedTrove
     let sharedTroveFactory
     let borrowerOperations
-    let troveManager
 
     /// Global variable for each contract addresses
     let SHARED_TROVE
@@ -79,10 +78,6 @@ contract("SharedTrove", function(accounts) {
             borrowerOperations = await IBorrowerOperations.at(BORROWER_OPERATIONS)
         })
 
-        it("Create the TroveManager contract instance", async () => {
-            troveManager = await ITroveManager.at(TROVE_MANAGER)
-        })
-
         // it("Deploy the BorrowerOperations contract", async () => {
         //     borrowerOperations = await BorrowerOperations.new(TROVE_MANAGER,
         //                                                        ACTIVE_POOL, 
@@ -107,7 +102,6 @@ contract("SharedTrove", function(accounts) {
         it("[Log]: Deployed-contracts addresses", async () => {
             console.log("=== SHARED_TROVE_FACTORY ===", SHARED_TROVE_FACTORY)
             console.log("=== BORROWER_OPERATIONS ===", BORROWER_OPERATIONS)
-            console.log("=== TROVE_MANAGER ===", TROVE_MANAGER)
         })
     })
 
@@ -126,8 +120,8 @@ contract("SharedTrove", function(accounts) {
         })
 
         it("Close a existing trove (by user1)", async () => {
-            const _borrower = user1
-            let txReceipt = await troveManager.closeTrove(_borrower, { from: user1 })  /// [Result]: 
+            /// [Note]: Caller must be the BorrowerOperations contract
+            let txReceipt = await borrowerOperations.closeTrove({ from: user1 })  /// [Result]: 
         })
 
     })
