@@ -12,7 +12,6 @@ const tokenAddressList = require("../../migrations/addressesList/tokenAddress/to
 /// Artifact of smart contracts 
 const SharedTrove = artifacts.require("SharedTrove")
 const SharedTroveFactory = artifacts.require("SharedTroveFactory")
-const BorrowerOperations = artifacts.require("BorrowerOperations")
 const IBorrowerOperations = artifacts.require("IBorrowerOperations")
 const ILUSDToken = artifacts.require("ILUSDToken")
 
@@ -38,18 +37,8 @@ contract("SharedTrove", function(accounts) {
     /// Global variable for each contract addresses
     let SHARED_TROVE
     let SHARED_TROVE_FACTORY
-    //let BORROWER_OPERATIONS
     let BORROWER_OPERATIONS = contractAddressList["Kovan"]["Liquity"]["borrowerOperations"]
-    let TROVE_MANAGER = contractAddressList["Kovan"]["Liquity"]["troveManager"]
-    let ACTIVE_POOL = contractAddressList["Kovan"]["Liquity"]["activePool"]
-    let DEFAULT_POOL = contractAddressList["Kovan"]["Liquity"]["defaultPool"]
-    let STABILITY_POOL = contractAddressList["Kovan"]["Liquity"]["stabilityPool"]
-    let GAS_POOL = contractAddressList["Kovan"]["Liquity"]["gasPool"]
-    let COLL_SURPLUS_POOL = contractAddressList["Kovan"]["Liquity"]["collSurplusPool"]
-    let PRICE_FEED = contractAddressList["Kovan"]["Liquity"]["priceFeed"]
-    let SORTED_TROVES = contractAddressList["Kovan"]["Liquity"]["sortedTroves"]
     let LUSD_TOKEN = tokenAddressList["Kovan"]["Liquity"]["lusdToken"]
-    let LQTY_STAKING = contractAddressList["Kovan"]["Liquity"]["lqtyStaking"]
 
     /// Global variable for each shared-trove
     let sharedTrove1
@@ -83,24 +72,8 @@ contract("SharedTrove", function(accounts) {
             borrowerOperations = await IBorrowerOperations.at(BORROWER_OPERATIONS)
         })
 
-        // it("Deploy the BorrowerOperations contract", async () => {
-        //     borrowerOperations = await BorrowerOperations.new(TROVE_MANAGER,
-        //                                                        ACTIVE_POOL, 
-        //                                                        DEFAULT_POOL, 
-        //                                                        STABILITY_POOL, 
-        //                                                        GAS_POOL, 
-        //                                                        COLL_SURPLUS_POOL, 
-        //                                                        PRICE_FEED,
-        //                                                        SORTED_TROVES,
-        //                                                        LUSD_TOKEN,
-        //                                                        LQTY_STAKING, 
-        //                                                        { from: deployer })
-        //     BORROWER_OPERATIONS = borrowerOperations.address
-        // })
-
         it("Deploy the SharedTroveFactory contract", async () => {
             sharedTroveFactory = await SharedTroveFactory.new(BORROWER_OPERATIONS, { from: deployer })
-            //sharedTroveFactory = await SharedTroveFactory.new(BORROWER_OPERATIONS, TROVE_MANAGER, { from: deployer })
             SHARED_TROVE_FACTORY = sharedTroveFactory.address
         })
 
@@ -129,21 +102,21 @@ contract("SharedTrove", function(accounts) {
             sharedTrove1 = await SharedTrove.at(SHARED_TROVE_1, { from: deployer })
         })
 
-        it("1 ETH should be deposited into the SharedTrove1 from user1, 2, 3", async () => {
-            const _depositETHAmount = web3.utils.toWei('1', 'ether')  /// 1 ETH
+        it("2 ETH should be deposited into the SharedTrove1 from user1, 2, 3", async () => {
+            const _depositETHAmount = web3.utils.toWei('2', 'ether')  /// 2 ETH
 
             let txReceipt1 = await sharedTrove1.depositToSharedPool({ from: user1, value: _depositETHAmount })
             let txReceipt2 = await sharedTrove1.depositToSharedPool({ from: user2, value: _depositETHAmount })
             let txReceipt3 = await sharedTrove1.depositToSharedPool({ from: user3, value: _depositETHAmount })
         })
 
-        it("ETH balance of the SharedTrove1 pool contract (pool) should be 3 ETH", async () => {
+        it("ETH balance of the SharedTrove1 pool contract should be 6 ETH", async () => {
             /// [Note]: MCR (Minimum collateral ratio for individual troves) should be more than 110%
             ///         Therefore, ETH balance of the SharedTrove1 contract (pool) should be more than around 1.5 ETH.
             let _ethBalance = await sharedTrove1.getETHBalance()
             let ethBalance = web3.utils.fromWei(String(_ethBalance), 'ether')
-            assert.equal(ethBalance, "3", "ETH balance of the SharedTrove1 contract (pool) should be 3 ETH")
-            console.log('=== ETH balance of the SharedTrove1 contract (pool) ===', ethBalance)
+            assert.equal(ethBalance, "6", "ETH balance of the SharedTrove1 contract (pool) should be 6 ETH")
+            console.log('=== ETH balance of the SharedTrove1 pool contract ===', ethBalance)
         })
 
         it("Open a new trove with multiple users. (Batched top-ups)", async () => {
@@ -153,12 +126,12 @@ contract("SharedTrove", function(accounts) {
             /// [Note]: 5e15 == minimum 0.5% (This percentage should be more than 0.5% == 5e15) 
             const _maxFee = web3.utils.toWei('0.05', 'ether')     /// 5% == 5e16
             const _LUSDAmount = web3.utils.toWei('2000', 'ether') /// MIN_NET_DEBT = 1950e18 (Therefore, _LUSDAmount should be more than 1950 LUSD)
-            const _upperHint = "0x0224588b20e1042264F0B55687cEAA450EEfc300"
-            const _lowerHint = "0xCE6339181bA6257A339C66f06FC367298b5987E3"
+            const _upperHint = "0x86242C99D115b17447d48780Ca7E49088B780275"
+            const _lowerHint = "0x978B86E32Db4D364d15aEbd1622d5c6a74E9A364"
 
             /// [Note]: Open a new trove by depositing 3 ETH as a collateral
             /// [Note]: MCR (Minimum collateral ratio for individual troves) should be more than 110% (Roughly more than 1.5 ETH is needed)
-            let txReceipt1 = await sharedTrove1.openTroveWithMultipleUsers(_collateralETHAmount, _maxFee, _LUSDAmount, _upperHint, _lowerHint, { from: user3 })
+            let txReceipt1 = await sharedTrove1.openTroveWithMultipleUsers(_collateralETHAmount, _maxFee, _LUSDAmount, _upperHint, _lowerHint, { from: user1 })
         })
 
         it("LUSD Token balance of the SharedTrove1 pool contract should be 2000 LUSD", async () => {
@@ -178,7 +151,7 @@ contract("SharedTrove", function(accounts) {
             const _upperHint = "0x0224588b20e1042264F0B55687cEAA450EEfc300"
             const _lowerHint = "0xCE6339181bA6257A339C66f06FC367298b5987E3"
 
-            let txReceipt1 = await sharedTrove1.adjustTroveWithMultipleUsers(_collateralETHAmount, _maxFee, _collWithdrawal, _debtChange, _isDebtIncrease, _upperHint, _lowerHint, { from: user3 })  /// [Result]: Successful
+            let txReceipt1 = await sharedTrove1.adjustTroveWithMultipleUsers(_collateralETHAmount, _maxFee, _collWithdrawal, _debtChange, _isDebtIncrease, _upperHint, _lowerHint, { from: user1 })  /// [Result]:
         })
 
         it("LUSD Token balance of the SharedTrove1 pool contract should be 2100 LUSD", async () => {
