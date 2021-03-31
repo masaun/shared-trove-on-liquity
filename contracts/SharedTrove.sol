@@ -29,13 +29,10 @@ contract SharedTrove is SharedPool {
     /**
      * @notice - This pool contract execute openTrove() 
      */
-    function openTroveWithMultipleUsers(uint _maxFee, uint _LUSDAmount, address _upperHint, address _lowerHint) public payable returns (bool) {
-        /// [Todo]: Transfer ETH from this pool to the BorrowerOperations contract
-        //BORROWER_OPERATIONS.transfer(_depositETHAmount);
-        //BORROWER_OPERATIONS.transfer(2 ether);
-
+    function openTroveWithMultipleUsers(uint _collateralETHAmount, uint _maxFee, uint _LUSDAmount, address _upperHint, address _lowerHint) public payable returns (bool) {
         /// [Note]: Pooled-ETH is deposited for opening a new trove.
-        borrowerOperations.openTrove(_maxFee, _LUSDAmount, _upperHint, _lowerHint);
+        borrowerOperations.openTrove{ value: _collateralETHAmount }(_maxFee, _LUSDAmount, _upperHint, _lowerHint);
+        //borrowerOperations.openTrove{ value: 3e18 }(_maxFee, _LUSDAmount, _upperHint, _lowerHint);  /// [Note]: collateralETHAmount is 3 ETH
     }
 
 
