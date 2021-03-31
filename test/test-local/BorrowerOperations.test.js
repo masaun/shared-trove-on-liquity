@@ -27,15 +27,10 @@ contract("BorrowerOperations", function(accounts) {
     let user3 = accounts[3]
 
     /// Global contract instance
-    let sharedTrove
-    let sharedTroveFactory
     let borrowerOperations
     let lusdToken
 
     /// Global variable for each contract addresses
-    let SHARED_TROVE
-    let SHARED_TROVE_FACTORY
-    //let BORROWER_OPERATIONS
     let BORROWER_OPERATIONS = contractAddressList["Kovan"]["Liquity"]["borrowerOperations"]
     let TROVE_MANAGER = contractAddressList["Kovan"]["Liquity"]["troveManager"]
     let ACTIVE_POOL = contractAddressList["Kovan"]["Liquity"]["activePool"]
@@ -47,14 +42,6 @@ contract("BorrowerOperations", function(accounts) {
     let SORTED_TROVES = contractAddressList["Kovan"]["Liquity"]["sortedTroves"]
     let LUSD_TOKEN = tokenAddressList["Kovan"]["Liquity"]["lusdToken"]
     let LQTY_STAKING = contractAddressList["Kovan"]["Liquity"]["lqtyStaking"]
-
-    /// Global variable for each shared-trove
-    let sharedTrove1
-    let sharedTrove2
-    let sharedTrove3
-    let SHARED_TROVE_1
-    let SHARED_TROVE_2
-    let SHARED_TROVE_3
 
     async function getEvents(contractInstance, eventName) {
         const _latestBlock = await time.latestBlock()
@@ -81,7 +68,6 @@ contract("BorrowerOperations", function(accounts) {
         })
 
         it("[Log]: Deployed-contracts addresses", async () => {
-            console.log("=== SHARED_TROVE_FACTORY ===", SHARED_TROVE_FACTORY)
             console.log("=== BORROWER_OPERATIONS ===", BORROWER_OPERATIONS)
             console.log("=== LUSD_TOKEN ===", LUSD_TOKEN)
         })
@@ -110,6 +96,23 @@ contract("BorrowerOperations", function(accounts) {
             console.log('=== LUSD Token Balance of user1 ===', web3.utils.fromWei(LUSDBalance, 'ether'))
             assert.equal(LUSD_BALANCE, "2000", "LUSD Token balance of user1 should be 2000 LUSD")
         })        
+
+        it("Adjust a existing trove. (Top-up 1 ETH as additional collateral and Receive 100 LUSD as additional debt)", async () => {
+            const _collateralETHAmount = web3.utils.toWei('1', 'ether') /// 1 ETH as additional collateral
+            const _maxFee = web3.utils.toWei('0.05', 'ether')           /// 5% == 5e16
+            const _collWithdrawal = web3.utils.toWei('0', 'ether')      /// Withdrawn-ETH as a collateral is 0 ETH
+            const _debtChange = web3.utils.toWei('100', 'ether')        /// Debt 100 LUSD as additional debt 
+            const _isDebtIncrease = true
+            const _upperHint = "0x0224588b20e1042264F0B55687cEAA450EEfc300"
+            const _lowerHint = "0xCE6339181bA6257A339C66f06FC367298b5987E3"
+
+            let txReceipt1 = await borrowerOperations.adjustTrove(_maxFee, _collWithdrawal, _debtChange, _isDebtIncrease, _upperHint, _lowerHint, { from: user3, value: _collateralETHAmount })
+        })
+
+        it("Withdraw collateral ETH from a existing trove", async () => {
+            /// [Todo]:
+        })
+
 
         // it("Close a existing trove", async () => {
         //     /// [Note]: Caller of closeTrove() method must be the BorrowerOperations contract
