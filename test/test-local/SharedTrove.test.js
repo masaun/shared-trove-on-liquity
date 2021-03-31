@@ -12,7 +12,6 @@ const tokenAddressList = require("../../migrations/addressesList/tokenAddress/to
 /// Artifact of smart contracts 
 const SharedTrove = artifacts.require("SharedTrove")
 const SharedTroveFactory = artifacts.require("SharedTroveFactory")
-const BorrowerOperations = artifacts.require("BorrowerOperations")
 const IBorrowerOperations = artifacts.require("IBorrowerOperations")
 const ILUSDToken = artifacts.require("ILUSDToken")
 
@@ -38,18 +37,8 @@ contract("SharedTrove", function(accounts) {
     /// Global variable for each contract addresses
     let SHARED_TROVE
     let SHARED_TROVE_FACTORY
-    //let BORROWER_OPERATIONS
     let BORROWER_OPERATIONS = contractAddressList["Kovan"]["Liquity"]["borrowerOperations"]
-    let TROVE_MANAGER = contractAddressList["Kovan"]["Liquity"]["troveManager"]
-    let ACTIVE_POOL = contractAddressList["Kovan"]["Liquity"]["activePool"]
-    let DEFAULT_POOL = contractAddressList["Kovan"]["Liquity"]["defaultPool"]
-    let STABILITY_POOL = contractAddressList["Kovan"]["Liquity"]["stabilityPool"]
-    let GAS_POOL = contractAddressList["Kovan"]["Liquity"]["gasPool"]
-    let COLL_SURPLUS_POOL = contractAddressList["Kovan"]["Liquity"]["collSurplusPool"]
-    let PRICE_FEED = contractAddressList["Kovan"]["Liquity"]["priceFeed"]
-    let SORTED_TROVES = contractAddressList["Kovan"]["Liquity"]["sortedTroves"]
     let LUSD_TOKEN = tokenAddressList["Kovan"]["Liquity"]["lusdToken"]
-    let LQTY_STAKING = contractAddressList["Kovan"]["Liquity"]["lqtyStaking"]
 
     /// Global variable for each shared-trove
     let sharedTrove1
@@ -82,21 +71,6 @@ contract("SharedTrove", function(accounts) {
         it("Create the BorrowerOperations contract instance", async () => {
             borrowerOperations = await IBorrowerOperations.at(BORROWER_OPERATIONS)
         })
-
-        // it("Deploy the BorrowerOperations contract", async () => {
-        //     borrowerOperations = await BorrowerOperations.new(TROVE_MANAGER,
-        //                                                        ACTIVE_POOL, 
-        //                                                        DEFAULT_POOL, 
-        //                                                        STABILITY_POOL, 
-        //                                                        GAS_POOL, 
-        //                                                        COLL_SURPLUS_POOL, 
-        //                                                        PRICE_FEED,
-        //                                                        SORTED_TROVES,
-        //                                                        LUSD_TOKEN,
-        //                                                        LQTY_STAKING, 
-        //                                                        { from: deployer })
-        //     BORROWER_OPERATIONS = borrowerOperations.address
-        // })
 
         it("Deploy the SharedTroveFactory contract", async () => {
             sharedTroveFactory = await SharedTroveFactory.new(BORROWER_OPERATIONS, { from: deployer })
