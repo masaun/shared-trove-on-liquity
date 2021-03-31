@@ -111,37 +111,6 @@ contract("SharedTrove", function(accounts) {
         })
     })
 
-    describe("BorrowerOperations", () => {
-        it("Open a new trove", async () => {
-            /// [Note]: 1e18 == 100%
-            /// [Note]: 5e15 == minimum 0.5% (This percentage should be more than 0.5% == 5e15) 
-            const _maxFee = web3.utils.toWei('0.05', 'ether')     /// 5% == 5e16
-            const _LUSDAmount = web3.utils.toWei('2000', 'ether') /// MIN_NET_DEBT = 1950e18 (Therefore, _LUSDAmount should be more than 1950 LUSD)
-            const _upperHint = user2
-            const _lowerHint = user3
-
-            const _collateralETH = web3.utils.toWei('3', 'ether')
-
-            /// [Test]: Execute openTrove() method by using the BorrowerOperations.sol
-            /// [Note]: Transfer 2 ETH as a collateral
-            let txReceipt = await borrowerOperations.openTrove(_maxFee, _LUSDAmount, _upperHint, _lowerHint, { from: user1, value: _collateralETH })  /// [Result]: Successful. (Be able to retrieve 3 events)
-        })
-
-        it("LUSD Token balance of user1 should be 2000 LUSD", async () => {
-            let _LUSDBalance = await lusdToken.balanceOf(user1)
-            let LUSDBalance = String(_LUSDBalance)
-            let LUSD_BALANCE = web3.utils.fromWei(LUSDBalance, 'ether')
-            console.log('=== LUSD Token Balance of user1 ===', web3.utils.fromWei(LUSDBalance, 'ether'))
-            assert.equal(LUSD_BALANCE, "2000", "LUSD Token balance of user1 should be 2000 LUSD")
-        })        
-
-        // it("Close a existing trove", async () => {
-        //     /// [Note]: Caller of closeTrove() method must be the BorrowerOperations contract
-        //     let txReceipt = await borrowerOperations.closeTrove({ from: user1 })  /// [Result]: 
-        // })
-    })
-
-
     describe("SharedTroveFactory", () => {
         it("A new shared-trove should be created", async () => {
             txReceipt = await sharedTroveFactory.createSharedTrove({ from: user1 })
@@ -196,11 +165,11 @@ contract("SharedTrove", function(accounts) {
             let _LUSDBalance = await lusdToken.balanceOf(SHARED_TROVE_1)
             let LUSDBalance = String(_LUSDBalance)
             let LUSD_BALANCE = web3.utils.fromWei(LUSDBalance, 'ether')
-            console.log('=== LUSD Token Balance of the SharedTrove1 pool ===', web3.utils.fromWei(LUSDBalance, 'ether'))
+            console.log('=== LUSD Token Balance of the SharedTrove1 pool contract ===', web3.utils.fromWei(LUSDBalance, 'ether'))
             assert.equal(LUSD_BALANCE, "2000", "LUSD Token balance of the SharedTrove1 pool should be 2000 LUSD")
         })
 
-        it("Adjust a existing trove with multiple users. (Batched adjustment)", async () => {
+        it("Adjust a existing trove with multiple users. (Batched adjustments and top-ups)", async () => {
             const _collateralETHAmount = web3.utils.toWei('1', 'ether') /// 1 ETH as additional collateral
             const _maxFee = web3.utils.toWei('0.05', 'ether')           /// 5% == 5e16
             const _collWithdrawal = web3.utils.toWei('0', 'ether')      /// Withdrawn-ETH as a collateral is 0 ETH
@@ -212,7 +181,7 @@ contract("SharedTrove", function(accounts) {
             let txReceipt1 = await sharedTrove1.adjustTroveWithMultipleUsers(_collateralETHAmount, _maxFee, _collWithdrawal, _debtChange, _isDebtIncrease, _upperHint, _lowerHint, { from: user3 })
         })
 
-        it("Withdraw collateral ETH from a existing trove with multiple users. (Batched withdrawal)", async () => {
+        it("Withdraw collateral ETH from a existing trove with multiple users. (Batched withdrawals)", async () => {
             /// [Todo]:
         })
     })

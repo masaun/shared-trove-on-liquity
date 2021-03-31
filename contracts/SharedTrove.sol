@@ -37,6 +37,9 @@ contract SharedTrove is SharedPool {
 
     /**
      * @notice - Adjust a trove with multiple users
+     * @notice - Alongside a debt change, this function can perform either a collateral top-up or a collateral withdrawal. 
+     * @notice - It therefore expects either a positive msg.value, or a positive _collWithdrawal argument.
+     * @notice - If both are positive, it will revert.
      */
     function adjustTroveWithMultipleUsers(uint _collateralETHAmount, uint _maxFee, uint _collWithdrawal, uint _debtChange, bool isDebtIncrease, address _upperHint, address _lowerHint) public payable returns (bool) {
         borrowerOperations.adjustTrove{ value: _collateralETHAmount }(_maxFee, _collWithdrawal, _debtChange, isDebtIncrease, _upperHint, _lowerHint);
