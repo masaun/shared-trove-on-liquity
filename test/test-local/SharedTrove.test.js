@@ -110,13 +110,13 @@ contract("SharedTrove", function(accounts) {
             let txReceipt3 = await sharedTrove1.depositToSharedPool({ from: user3, value: _depositETHAmount })
         })
 
-        it("ETH balance of the SharedTrove1 pool contract should be 3 ETH", async () => {
+        it("ETH balance of the SharedTrove1 pool contract should be 6 ETH", async () => {
             /// [Note]: MCR (Minimum collateral ratio for individual troves) should be more than 110%
             ///         Therefore, ETH balance of the SharedTrove1 contract (pool) should be more than around 1.5 ETH.
             let _ethBalance = await sharedTrove1.getETHBalance()
             let ethBalance = web3.utils.fromWei(String(_ethBalance), 'ether')
-            assert.equal(ethBalance, "3", "ETH balance of the SharedTrove1 contract (pool) should be 3 ETH")
-            console.log('=== ETH balance of the SharedTrove1 contract (pool) ===', ethBalance)
+            assert.equal(ethBalance, "6", "ETH balance of the SharedTrove1 contract (pool) should be 6 ETH")
+            console.log('=== ETH balance of the SharedTrove1 pool contract ===', ethBalance)
         })
 
         it("Open a new trove with multiple users. (Batched top-ups)", async () => {
