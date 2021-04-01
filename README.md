@@ -11,7 +11,8 @@
 ***
 
 ## 【Workflow】
-- Diagram of workflow  
+- Diagram of workflow
+![【Diagram】Shared-Trove on Liquity](https://user-images.githubusercontent.com/19357502/113228096-1699dd00-92cf-11eb-9c3b-b63114dab361.jpg)
 
 &nbsp;
 
@@ -56,8 +57,8 @@ https://infura.io/
 ```
 $ ganache-cli -d --fork https://kovan.infura.io/v3/{YOUR INFURA KEY OF KOVAN}
 ```
-(※ `-d` option is the option in order to be able to use same address on Ganache-CLI every time)
-(※ Please stop and re-start if an error of `"Returned error: project ID does not have access to archive state"` is displayed)
+(※ `-d` option is the option in order to be able to use same address on Ganache-CLI every time)  
+(※ Please stop and re-start if an error of `"Returned error: project ID does not have access to archive state"` is displayed)  
 
 <br>
 
@@ -81,7 +82,7 @@ $ ganache-cli -d --fork https://kovan.infura.io/v3/{YOUR INFURA KEY OF KOVAN}
 
 ## 【References】
 - Liquity
-  - GR9 Prize：https://gitcoin.co/issue/liquity/beta/4/100025007
+  - GR9 Prize (Liquity Bounty 3 - “Open Ended: Best Liquity Tool / Integration”)：https://gitcoin.co/issue/liquity/beta/4/100025007
   - dApp on Kovan：https://devui.liquity.org/latest/
   - Smart contract：https://github.com/liquity/beta
     - Interfaces: 
