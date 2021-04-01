@@ -4,7 +4,8 @@
 ## 【Introduction of the Shared-Trove on Liquity】
 - This is a smart contract that is able to create a shared-trove: 
   - multiple users per single Trove, with the aim of a reduced minimum net debt per user, 
-  - and `batched top-ups / withdrawals / adjustments` to save on gas costs
+  - and `batched top-ups / adjustments / withdrawals` to save on gas costs
+    (※ Note: Implementation of `withdrawals` above is still in progress)
 
 &nbsp;
 
